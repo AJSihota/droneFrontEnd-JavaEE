@@ -1,0 +1,119 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package control;
+
+import SLSBeans.dronedbSLSB;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ *
+ * @author 562841
+ */
+public class TableHelper {
+    
+    dronedbSLSB dd;
+    
+    /**
+     * Get contents of the shelf by id and outputs an html table with the data
+     * @param shelfId
+     * @return 
+     */
+    public String getShelf(String shelfId)
+    {
+        String resultTable = "<div class=rows><div class=col-xs-6><table class=table table-striped>";
+        resultTable+="<th>xPos</th><th>yPos</th><th>Product</th><th>UPC</th><th>Edit</th>";
+        try {
+            dd = new dronedbSLSB();
+            
+            ResultSet rs = dd.getProductsAt(shelfId);
+            while(rs.next()){
+                resultTable+="<tr>";
+                    resultTable+="<td>" + rs.getString(1) +"</td>";
+                    resultTable+="<td>" + rs.getString(2) +"</td>";
+                    resultTable+="<td>" + rs.getString(3) +"</td>";
+                    resultTable+="<td>" + rs.getString(4) +"</td>";
+                    resultTable+="<td><button class='btn btn-info editProd'>edit</button></td>";
+                resultTable+="<tr>";
+            }
+            resultTable+="</table></div></div>";
+            
+            dd.close();
+            return resultTable;
+        } catch (SQLException ex) {
+            Logger.getLogger(TableHelper.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    /**
+     * Gets all of the tasks in the database and outputs an html table with the data
+     * @param
+     * @return 
+     */
+    public String getTaskList()
+    {
+        String resultTable = "<div class=rows><div class=col-xs-6><table class=table table-striped>";
+        resultTable="<th>Product</th><th>Shelf</th><th>xPos</th><th>yPos</th><th>Status</th><th>Edit</th><th>Remove</th>";
+        try {
+            dd = new dronedbSLSB();
+            
+            ResultSet rs = dd.getTaskList();
+            while(rs.next()){
+                resultTable+="<tr>";
+                    resultTable+="<td>" + rs.getString(1) +"</td>";
+                    resultTable+="<td>" + rs.getString(2) +"</td>";
+                    resultTable+="<td>" + rs.getString(3) +"</td>";
+                    resultTable+="<td>" + rs.getString(4) +"</td>";
+                    resultTable+="<td>" + rs.getString(5) +"</td>";
+                    resultTable+="<td><button class='btn btn-info editTask'>Edit</button></td>";
+                    resultTable+="<td><button class='btn btn-info removeTask'>Remove</button></td>";
+                resultTable+="</tr>";
+            }
+            resultTable+="</table></div></div>";
+            
+            dd.close();
+            return resultTable;
+        } catch (SQLException ex) {
+            Logger.getLogger(TableHelper.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    /**
+     * Get all of the products in the database and outputs an html table with the data
+     * @param shelfId
+     * @return 
+     */
+    public String getProducts()
+    {
+        String resultTable = "<div class=rows><div class=col-xs-6><table class=table table-striped>";
+        resultTable+="<th>Product</th><th>UPC</th><th>Supplier</th><th># of Locations?</th><th>Edit</th>";
+        try {
+            dd = new dronedbSLSB();
+            
+            ResultSet rs = dd.getProducts();
+            while(rs.next()){
+                resultTable+="<tr>";
+                    resultTable+="<td>" + rs.getString(1) +"</td>";
+                    resultTable+="<td>" + rs.getString(2) +"</td>";
+                    resultTable+="<td>" + rs.getString(3) +"</td>";
+                    resultTable+="<td>" + rs.getString(4) +"</td>";
+                    resultTable+="<td><button class='btn btn-info editProd'>Edit</button></td>";
+                resultTable+="</tr>";
+            }
+            resultTable+="</table></div></div>";
+            
+            dd.close();
+            return resultTable;
+        } catch (SQLException ex) {
+            Logger.getLogger(TableHelper.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+}

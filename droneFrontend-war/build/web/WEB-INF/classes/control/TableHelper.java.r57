@@ -1,0 +1,139 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package control;
+
+import SLSBeans.dronedbSLSB;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+/**
+ *
+ * @author 562841
+ */
+public class TableHelper {
+    
+    dronedbSLSB dd;
+    
+    /**
+     * Get contents of the shelf by id and outputs an html table with the data
+     * @param shelfId
+     * @return 
+     */
+    public String getShelf(String shelfId) throws ClassNotFoundException
+    {
+        String resultTable = "<div class=rows><div class=col-xs-6><table class=table table-striped>";
+        resultTable+="<th>xPos</th><th>yPos</th><th>Product</th><th>UPC</th><th>Task</th>";
+        try {
+            dd = new dronedbSLSB();
+            dd.connect();
+            //<button type="button" class="btn btn-info editProd" data-id="3" data-toggle="modal" data-target="#productModal">Edit</button>
+            ResultSet rs = dd.getProductsAt(shelfId);
+            while(rs!=null && rs.next()){
+                resultTable+="<tr>";
+                    resultTable+="<td>" + rs.getInt(1) +"</td>";
+                    resultTable+="<td>" + rs.getInt(2) +"</td>";
+                    resultTable+="<td>" + rs.getString(3) +"</td>";
+                    resultTable+="<td>" + rs.getString(4) +"</td>";
+                    //resultTable+="<td><button class='btn btn-info editProd'>Edit</button></td>";
+                    resultTable+="<td>"
+                            + "<form action='TaskServlet' method='post'>"
+                            + "<input type='hidden' name='taskShelf' value='"+ shelfId +"'>"
+                            + "<input type='hidden' name='taskShelfx' value='"+ rs.getInt(1) +"'>"
+                            + "<input type='hidden' name='taskShelfy' value='"+ rs.getInt(2) +"'>"
+                            + "<input type='hidden' name='taskUPC' value='"+ rs.getString(4) +"'>"
+                            + "<button type='submit' class='btn btn-primary' name='create' value='create'>Create Task</button>"
+                            + "</form></td>";
+                resultTable+="<tr>";
+            }
+            resultTable+="</table></div></div>";
+            
+            dd.close();
+            return resultTable;
+        } catch (SQLException ex) {
+            Logger.getLogger(TableHelper.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    /**
+     * Gets all of the tasks in the database and outputs an html table with the data
+     * @param
+     * @return 
+     */
+    public String getTaskList() throws ClassNotFoundException
+    {
+        String resultTable = "<div class=rows><div class=col-xs-8><form action='TaskListServlet' method='post'><table class=table table-striped>";
+        resultTable+="<th>Queue</th><th>Task ID</th><th>Product UPC</th><th>Shelf</th><th>xPos</th><th>yPos</th><th>Date Created</th><th>Status</th><th>Remove</th>";
+        try {
+            dd = new dronedbSLSB();
+            dd.connect();
+            
+            ResultSet rs = dd.getTasks();
+            while(rs.next()){
+                resultTable+="<tr>";
+                    if(rs.getString(7).equals("Not completed"))
+                    {
+                        resultTable+="<td><input type='checkbox' name='task' value='"+ rs.getInt(1) +"'/></td>";
+                    }
+                    else
+                    {
+                        resultTable+="<td><input type='checkbox' disabled='disabled'/></td>";
+                    }
+                    resultTable+="<td>" + rs.getInt(1) +"</td>";
+                    resultTable+="<td>" + rs.getString(2) +"</td>";
+                    resultTable+="<td>" + rs.getString(3) +"</td>";
+                    resultTable+="<td>" + rs.getInt(4) +"</td>";
+                    resultTable+="<td>" + rs.getInt(5) +"</td>";
+                    resultTable+="<td>" + rs.getString(6) +"</td>";
+                    resultTable+="<td>" + rs.getString(7) +"</td>";
+                    resultTable+="<td><a class='btn btn-info removeTask' href='TaskListServlet?removeid="+ rs.getInt(1) +"'>Remove</a></td>";
+                resultTable+="</tr>";
+            }
+            resultTable+="</table><button type='submit' class='btn btn-primary' name='queueTasks' value='queue'>Queue Tasks</button></form></div></div>";
+            
+            dd.close();
+            return resultTable;
+        } catch (SQLException ex) {
+            Logger.getLogger(TableHelper.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    /**
+     * Get all of the products in the database and outputs an html table with the data
+     * @param shelfId
+     * @return 
+     */
+    public String getProducts() throws ClassNotFoundException
+    {
+        String resultTable = "<div class=rows><div class=col-xs-8><table class=table table-striped>";
+        resultTable+="<th>Product</th><th>UPC</th><th>Supplier</th><th>Classifier</th>";
+        try {
+            dd = new dronedbSLSB();
+            dd.connect();
+            
+            ResultSet rs = dd.getProducts();
+            while(rs.next()){
+                resultTable+="<tr>";
+                    resultTable+="<td>" + rs.getString(1) +"</td>";
+                    resultTable+="<td>" + rs.getString(2) +"</td>";
+                    resultTable+="<td>" + rs.getString(3) +"</td>";
+                    resultTable+="<td>" + rs.getString(4) +"</td>";
+                    //resultTable+="<td><button class='btn btn-info editProd'>Edit</button></td>";
+                resultTable+="</tr>";
+            }
+            resultTable+="</table></div></div>";
+            
+            dd.close();
+            return resultTable;
+        } catch (SQLException ex) {
+            Logger.getLogger(TableHelper.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+}

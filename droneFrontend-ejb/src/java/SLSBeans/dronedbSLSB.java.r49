@@ -1,0 +1,256 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package SLSBeans;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.Stateless;
+import javax.ejb.LocalBean;
+
+/**
+ *
+ * @author 562841
+ */
+@Stateless
+@LocalBean
+public class dronedbSLSB {
+
+    private Connection conn;
+    private PreparedStatement ps;
+    
+    public dronedbSLSB()
+    {
+        //TODO: get connection
+    }
+    
+    public void close()
+    {
+        try {
+            ps.close();
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(dronedbSLSB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /*********************************************************************************************
+    ** User validation functions
+    *********************************************************************************************/
+    
+    //hash password????
+    public ResultSet isUser(String username, String password)
+    {
+        try {
+            String sql = "call isUser(?)";
+            ps = conn.prepareCall(sql);
+            ps.setString(1,username);
+            ps.setString(2, password);
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        } catch (SQLException ex) {
+            Logger.getLogger(dronedbSLSB.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public ResultSet isAdmin(String username)
+    {
+        try {
+            String sql = "call isAdmin(?)";
+            ps = conn.prepareCall(sql);
+            ps.setString(1,username);
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        } catch (SQLException ex) {
+            Logger.getLogger(dronedbSLSB.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public ResultSet setAdmin(String username)
+    {
+        try {
+            String sql = "call setAdmin(?)";
+            ps = conn.prepareCall(sql);
+            ps.setString(1,username);
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        } catch (SQLException ex) {
+            Logger.getLogger(dronedbSLSB.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+
+    public ResultSet removeUser(String username)
+    {
+        try {
+            String sql = "call removeUser(?)";
+            ps = conn.prepareCall(sql);
+            ps.setString(1,username);
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        } catch (SQLException ex) {
+            Logger.getLogger(dronedbSLSB.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    /*********************************************************************************************
+    ** Product functions
+    *********************************************************************************************/
+    
+    public ResultSet getProducts()
+    {
+        try {
+            String sql = "call getAllProducts()";
+            ps = conn.prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        } catch (SQLException ex) {
+            Logger.getLogger(dronedbSLSB.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public ResultSet addProduct(String name, String UPC)
+    {
+        try {
+            String sql = "call removeProduct(?)";
+            ps = conn.prepareCall(sql);
+            ps.setString(1, UPC);
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        } catch (SQLException ex) {
+            Logger.getLogger(dronedbSLSB.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public void editProduct(String UPC)
+    {
+        //TODO: call procedure to update product based on UPC
+        //input parameters to change
+    }
+    
+    public ResultSet removeProduct(String UPC)
+    {
+        try {
+            String sql = "call removeProducts(?)";
+            ps = conn.prepareCall(sql);
+            ps.setString(1, UPC);
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        } catch (SQLException ex) {
+            Logger.getLogger(dronedbSLSB.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public ResultSet getProductsAt(String shelfId)
+    {
+        try {
+            String sql = "call getProductsAt(?)";
+            ps = conn.prepareCall(sql);
+            ps.setString(1, shelfId);
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        } catch (SQLException ex) {
+            Logger.getLogger(dronedbSLSB.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public ResultSet removeProductAt(String shelfId, int x, int y)
+    {
+        try {
+            String sql = "call removeProductAt(?,?,?)";
+            ps = conn.prepareCall(sql);
+            ps.setString(1, shelfId);
+            ps.setInt(2, x);
+            ps.setInt(3, y);
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        } catch (SQLException ex) {
+            Logger.getLogger(dronedbSLSB.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    /*********************************************************************************************
+    ** Task functions
+    *********************************************************************************************/
+    
+    public ResultSet getTaskList()
+    {
+        try {
+            String sql = "call getTasks()";
+            ps = conn.prepareCall(sql);
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        } catch (SQLException ex) {
+            Logger.getLogger(dronedbSLSB.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    /*
+    public void addTaskList()
+    {
+        //TODO: call procedure create taskList
+    }
+    
+    public void removeTaskList(int taskListId)
+    {
+        //TODO: call procedure remove a taskList
+    }
+    */
+    public ResultSet addTask(String UPC, String shelfId)
+    {
+        try {
+            String sql = "call setTask(?,?)";
+            ps = conn.prepareCall(sql);
+            ps.setString(1, UPC);
+            ps.setString(2, shelfId);
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        } catch (SQLException ex) {
+            Logger.getLogger(dronedbSLSB.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public ResultSet removeTask(int taskId)
+    {
+        try {
+            String sql = "call removeTask(?)";
+            ps = conn.prepareCall(sql);
+            ps.setInt(1, taskId);
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        } catch (SQLException ex) {
+            Logger.getLogger(dronedbSLSB.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public ResultSet setTaskStatus(int taskId, int status)
+    {
+        try {
+            String sql = "call setTaskStatus(?,?)";
+            ps = conn.prepareCall(sql);
+            ps.setInt(1, taskId);
+            ps.setInt(2, status);
+            ResultSet rs = ps.executeQuery();
+            return rs;
+        } catch (SQLException ex) {
+            Logger.getLogger(dronedbSLSB.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+}

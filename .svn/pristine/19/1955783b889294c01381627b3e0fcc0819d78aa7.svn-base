@@ -1,0 +1,30 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package droneBean;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.ejb.Local;
+import javax.naming.NamingException;
+
+/**
+ *
+ * @author 643119
+ */
+@Local
+public interface DroneSLSBLocal {
+
+    void newUser(String username, String password, boolean isAdmin) throws ClassNotFoundException, SQLException, NamingException;
+
+    void deleteUser(String username) throws ClassNotFoundException, SQLException, NamingException;
+
+    ResultSet isAdmin(String username) throws ClassNotFoundException, SQLException, NamingException;
+
+    ResultSet checkUsers(String username, String password) throws ClassNotFoundException, SQLException, NamingException;
+
+    void toggleAdmin(String username) throws ClassNotFoundException, SQLException, NamingException;
+    
+}

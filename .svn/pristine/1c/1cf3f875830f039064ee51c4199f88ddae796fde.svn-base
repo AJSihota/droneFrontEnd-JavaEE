@@ -1,0 +1,144 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package droneBean;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.ejb.Stateless;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+
+/**
+ *
+ * @author 643119
+ */
+@Stateless
+public class DroneSLSB implements DroneSLSBLocal 
+{
+
+    /**
+     *
+     * @param username
+     * @param password
+     * @param isAdmin
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     * @throws NamingException
+     */
+    @Override
+    public void newUser(String username, String password, boolean isAdmin) throws ClassNotFoundException, SQLException, NamingException
+    {
+        
+        Class.forName("com.mysql.jdbc.Driver");
+        InitialContext ic = new InitialContext();
+
+        DataSource ds = (DataSource)ic.lookup("jdbc/quiz4Pool");
+
+        try (Connection conn = ds.getConnection()) {
+            String sql = "call addUser(?,?)";
+            CallableStatement cs = conn.prepareCall(sql);
+            cs.setString(1, username);
+            cs.setString(2, password);
+            cs.execute();
+            
+            cs.close();
+        }
+    }
+
+    /**
+     *
+     * @param username
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     * @throws NamingException
+     */
+    @Override
+    public void deleteUser(String username) throws ClassNotFoundException, SQLException, NamingException
+    {
+        Class.forName("com.mysql.jdbc.Driver");
+        InitialContext ic = new InitialContext();
+
+        DataSource ds = (DataSource)ic.lookup("jdbc/quiz4Pool");
+
+        try (Connection conn = ds.getConnection()) {
+            String sql = "call deleteUser(?)";
+            CallableStatement cs = conn.prepareCall(sql);
+            cs.setString(1, username);
+            cs.execute();
+            
+            cs.close();
+        }
+    }
+
+    /**
+     *
+     * @param username
+     * @return
+     */
+    @Override
+    public ResultSet isAdmin(String username) throws ClassNotFoundException, SQLException, NamingException
+    {
+        Class.forName("com.mysql.jdbc.Driver");
+        InitialContext ic = new InitialContext();
+
+        DataSource ds = (DataSource)ic.lookup("jdbc/quiz4Pool");
+
+        try (Connection conn = ds.getConnection()) {
+            String sql = "call isAdmin(?)";
+            CallableStatement cs = conn.prepareCall(sql);
+            cs.setString(1, username);
+            ResultSet rs = cs.executeQuery();
+            
+            cs.close();
+            return rs;
+        }
+    }
+
+    @Override
+    public ResultSet checkUsers(String username, String password) throws ClassNotFoundException, SQLException, NamingException
+    {
+        Class.forName("com.mysql.jdbc.Driver");
+        InitialContext ic = new InitialContext();
+
+        DataSource ds = (DataSource)ic.lookup("jdbc/quiz4Pool");
+
+        try (Connection conn = ds.getConnection()) {
+            String sql = "call checkUser(?,?)";
+            CallableStatement cs = conn.prepareCall(sql);
+            cs.setString(1, username);
+            cs.setString(2, password);
+            ResultSet rs = cs.executeQuery();
+            
+            cs.close();
+            return rs;
+        }
+    }
+
+    @Override
+    public void toggleAdmin(String username) throws ClassNotFoundException, SQLException, NamingException
+    {
+        Class.forName("com.mysql.jdbc.Driver");
+        InitialContext ic = new InitialContext();
+
+        DataSource ds = (DataSource)ic.lookup("jdbc/quiz4Pool");
+
+        try (Connection conn = ds.getConnection()) {
+            String sql = "call toggleAdmin(?)";
+            CallableStatement cs = conn.prepareCall(sql);
+            cs.setString(1, username);
+            cs.execute();
+            
+            cs.close();
+        }
+    }
+    
+    
+    
+    
+}
